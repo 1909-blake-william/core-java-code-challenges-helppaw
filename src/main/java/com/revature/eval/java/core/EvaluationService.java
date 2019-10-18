@@ -1,9 +1,12 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class EvaluationService {
+
 
 	/**
 	 * 1. Without using the StringBuilder or StringBuffer class, write a method that
@@ -122,7 +126,7 @@ public class EvaluationService {
 			}
 		}
 
-		public boolean isScalene() {
+		public boolean isScalene() { //i realize now that I could have simply made this method to equal != isIsosceles.
 			if ((sideOne != sideTwo) && (sideTwo != sideThree) && (sideOne != sideThree)) {
 				return true;
 			} else {
@@ -252,8 +256,8 @@ public class EvaluationService {
 
 		} else if (string.length() > 11) {
 
-			throw new IllegalArgumentException();
-		} else { //covers every other scenario
+			throw new IllegalArgumentException();//simplified way of going for exceptions. if it isnt only 11 characters, we have more to take out.
+		} else { // covers every other scenario
 			throw new IllegalArgumentException();
 		}
 	}
@@ -274,7 +278,7 @@ public class EvaluationService {
 
 		Scanner yourInput = new Scanner(string);
 
-		yourInput.useDelimiter("[^a-zA-Z']+");
+		yourInput.useDelimiter("[^a-zA-Z']+");//should effectively take out everything that isnt a word.
 		string = "";
 
 		while (yourInput.hasNext()) {
@@ -292,7 +296,6 @@ public class EvaluationService {
 		return theMap2;
 	}
 
-	
 	/**
 	 * 7. Implement a binary search algorithm.
 	 * 
@@ -330,74 +333,66 @@ public class EvaluationService {
 	 */
 	static class BinarySearch<T extends Comparable<T>> {
 		private List<T> sortedList;
-		/*
-		 * public indexOf( T t) { // TODO Write an implementation for this method
-		 * declaration
-		 * 
-		 * return 0; }
-		 * 
-		 * public BinarySearch(List<T> sortedList) { super();
-		 * 
-		 * 
-		 * 
-		 * this.sortedList = sortedList; }
-		 * 
-		 * public List<T> getSortedList() { return sortedList; }
-		 * 
-		 * public void setSortedList(List<T> sortedList) { this.sortedList = sortedList;
-		 * }
-		 * 
-		 * }
-		 */
 
-//still struggling with this one
-		
-		
 		public int indexOf(T t) {
-			
-			List<T> thisList = new ArrayList<T>();
-			thisList = sortedList;
-			Integer first = 0; // beginning of list
-			Integer last = thisList.size(); // end of list
-			Integer mid = ((first + last) / 2); // middle of list
 
-			while ((Integer) thisList.get(mid) != t) {
+			int upper = sortedList.size();
 
-				if (thisList.get(mid).equals(t)) {
+			int lower = 0;
+
+			int mid;
+
+			do {
+
+				mid = (upper - lower) / 2 + lower;
+
+				int diff = ((T) t).compareTo((T) sortedList.get(mid)); //originally was not passing through the correct object; had to revise in order to correctly use compareTo
+
+				if (diff > 0) {
+
+					lower = mid;
+
+				}
+
+				else if (diff < 0) {
+
+					upper = mid;
+
+				}
+
+				else
+
 					return mid;
-				}
 
-				if ((Integer) t < (Integer) thisList.get(mid)) {
-					last = mid;
-					mid = (first + last) / 2;
-				} else if ((Integer) t > (Integer) thisList.get(mid)) {
-					first = mid;
-					mid = (first + last) / 2;
-				}
-			}
-			return mid;
+			} while (upper != lower);
+
+			return -1;
+
 		}
 
 		public BinarySearch(List<T> sortedList) {
+
 			super();
+
 			this.sortedList = sortedList;
+
 		}
 
 		public List<T> getSortedList() {
+
 			return sortedList;
+
 		}
 
 		public void setSortedList(List<T> sortedList) {
-			this.sortedList = sortedList;
-		}
 
-		public int compare(T o1, T o2) {
-			//
-			return 0;
+			this.sortedList = sortedList;
+
 		}
 
 	}
 
+	
 	/**
 	 * 8. Implement a program that translates from English to Pig Latin.
 	 * 
@@ -525,8 +520,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+
+		List<Long> longList = new ArrayList<Long>();
+
+		for (int i = 2; i <= l; i++) {
+			if (l % i == 0) {
+
+				longList.add((long) i);
+				l /= i;
+				i--;
+			}
+		}
+
+		return longList;
 	}
 
 	/**
@@ -661,7 +667,7 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String encode(String string) {
-			
+
 			String allChars = "abcdefghijklmnopqrstuvwxyz";
 			string = string.replaceAll(" ", "");
 			string = string.toLowerCase();
@@ -771,8 +777,42 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		int j = 10;
+		int currValue = 0;
+
+		for (int i = 0; i < string.length(); i++) {
+			char checkChar = string.charAt(i);
+
+			switch (checkChar) {
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				currValue = currValue + (Character.getNumericValue(checkChar) * j);
+				break;
+			case 'X':
+				currValue = currValue + (10);
+				break;
+			case '-':
+				j++;
+				break;
+			default:
+
+			}
+
+			j--;
+
+		}
+		if (currValue % 11 == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -789,8 +829,30 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+
+		String alphabet = "abcdefghijklmnopqrstuvwxyz";
+		HashSet<Character> alphaHash = new HashSet<>();
+		HashSet<Character> myHash = new HashSet<>();
+		int letterCount = 0;
+
+		for (int i = 0; i < 26; i++) {
+			alphaHash.add(alphabet.charAt(i));
+		}
+
+		for (int i = 0; i < string.length(); i++) {
+			if (alphaHash.contains(string.charAt(i)) && !myHash.contains(string.charAt(i))) {
+				myHash.add(string.charAt(i));
+				letterCount++;
+			}
+		}
+
+		if (letterCount == 26) {
+			return true;
+		}
+
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -801,14 +863,22 @@ public class EvaluationService {
 	 * @param given
 	 * @return
 	 */
+
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
+
+		if (given instanceof LocalDate) {
+			LocalDate local = ((LocalDate) given);
+			return local.atStartOfDay().plusSeconds(1000000000);
+		} else if (given instanceof LocalDateTime) {
+
+			return ((LocalDateTime) given).plusSeconds(1000000000);
+
+		}
 		return null;
 	}
-
-	/**
-	 * 18. Given a number, find the sum of all the unique multiples of particular
-	 * numbers up to but not including that number.
+		 
+	  /** 18. Given a number, find the sum of all the unique multiples of
+	 * particular numbers up to but not including that number.
 	 * 
 	 * If we list all the natural numbers below 20 that are multiples of 3 or 5, we
 	 * get 3, 5, 6, 9, 10, 12, 15, and 18.
@@ -816,13 +886,16 @@ public class EvaluationService {
 	 * The sum of these multiples is 78.
 	 * 
 	 * @param i
+	 * 
 	 * @param set
+	 * 
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
 
 		int[] input = set;
 		int refNum = i;
+
 		Set<Integer> theHash = new HashSet<Integer>();
 		int[] numbers = { 0, 0, 0 };
 		int otherNum = 0;
@@ -835,6 +908,7 @@ public class EvaluationService {
 			}
 
 		}
+
 		for (int sum : theHash) {
 			otherNum += sum;
 		}
@@ -878,8 +952,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+
+		String fixedString = string.replaceAll("\\s", "");
+		int numCounter = 0;
+
+		for (int i = 1; i < fixedString.length(); i += 2) {
+			if ((fixedString.charAt(i) - '0') * 2 > 9) {
+				int newNumber = ((fixedString.charAt(i) - '0') * 2) - 9;
+				numCounter = numCounter + newNumber;
+			} else {
+				numCounter = numCounter + ((fixedString.charAt(i) - '0') * 2);
+			}
+		}
+
+		for (int j = 2; j < fixedString.length(); j += 2) {
+			numCounter = numCounter + (fixedString.charAt(j) - '0');
+		}
+		if (numCounter % 10 == 0) {
+			return true;
+		} else {
+
+			return false;
+		}
 	}
 
 	/**
